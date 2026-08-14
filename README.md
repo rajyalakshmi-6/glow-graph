@@ -358,8 +358,8 @@ Traces multi-hop paths of indirect barrier risk and ranks ingredients globally. 
 ---
 
 ## 🎥 Demo
-*   **Live app**: *[Add your Render deployment link here]*
-*   **Screen recording**: *[Add your demo video link here]*
+*   **Live app**: [GlowGraph on Render](https://glow-graph.onrender.com/)
+*   **Screen recording**: [Google Drive Walkthrough Video](https://drive.google.com/file/d/1WQ765zAf-sAsk5VPZbSGpdwFppDv6_-i/view?usp=drivesdk)
 
 ---
 
