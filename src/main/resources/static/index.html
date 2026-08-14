@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlowGraph — Skincare Graph Intelligence</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <span class="sparkle">✦</span>
+                <h1>GlowGraph</h1>
+            </div>
+            <p class="subtitle">Skincare Ingredient Intelligence & Routine Conflict Checker</p>
+        </div>
+    </header>
+
+    <main class="dashboard-container">
+        <!-- Navigation Tabs -->
+        <nav class="tab-navigation">
+            <button class="tab-btn active" onclick="switchTab('recommendations')">
+                <span class="tab-icon">🌿</span> Concern Recommendations
+            </button>
+            <button class="tab-btn" onclick="switchTab('routine')">
+                <span class="tab-icon">🧪</span> Routine Builder
+            </button>
+            <button class="tab-btn" onclick="switchTab('analyzer')">
+                <span class="tab-icon">🔍</span> Pair Analyzer
+            </button>
+            <button class="tab-btn" onclick="switchTab('intelligence')">
+                <span class="tab-icon">📊</span> Graph Intelligence
+            </button>
+        </nav>
+
+        <!-- Tab Content Areas -->
+        <div class="tab-content">
+            
+            <!-- 1. Concern Recommendations Tab -->
+            <section id="recommendations-tab" class="tab-panel active">
+                <div class="panel-header">
+                    <h2>Targeted Concern Solutions</h2>
+                    <p>Find matching graph-mapped skincare products formulated for your specific skin concerns.</p>
+                </div>
+                
+                <div class="interactive-control-bar">
+                    <div class="form-group">
+                        <label for="concern-select">Select Skin Concern</label>
+                        <select id="concern-select" onchange="getRecommendations()">
+                            <option value="">-- Select Skin Concern --</option>
+                            <option value="Acne">Acne</option>
+                            <option value="Hyperpigmentation">Hyperpigmentation</option>
+                            <option value="Aging">Aging</option>
+                            <option value="Dryness">Dryness</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="rec-loading" class="spinner-container hidden">
+                    <div class="spinner"></div>
+                    <p>Querying CognoDB Cloud Graph...</p>
+                </div>
+                <div id="rec-message" class="info-alert hidden"></div>
+                <div id="rec-products" class="products-grid"></div>
+            </section>
+
+            <!-- 2. Routine Builder Tab -->
+            <section id="routine-tab" class="tab-panel">
+                <div class="panel-header">
+                    <h2>Routine Conflict & Synergy Checker</h2>
+                    <p>Select products to analyze layered routine safety. Our graph database analyzes ingredient-level conflicts and synergies instantly.</p>
+                </div>
+
+                <div class="routine-builder-layout">
+                    <!-- Products Catalog checklist -->
+                    <div class="catalog-card">
+                        <h3>Product Catalog</h3>
+                        <p class="instruction">Choose products to add to your custom skincare routine:</p>
+                        
+                        <div id="catalog-loading" class="spinner-container">
+                            <div class="spinner"></div>
+                        </div>
+                        <div id="catalog-list" class="catalog-checklist"></div>
+                    </div>
+
+                    <!-- Selected Routine & Results -->
+                    <div class="analysis-results-card">
+                        <h3>Your Routine</h3>
+                        <div id="selected-routine-pills" class="routine-pills-container">
+                            <span class="empty-routine-text">No products added. Select products from the catalog to build your routine.</span>
+                        </div>
+
+                        <div class="action-bar">
+                            <button id="check-routine-btn" class="primary-btn" onclick="checkRoutineConflicts()" disabled>
+                                Analyze Routine Safety
+                            </button>
+                            <button class="secondary-btn" onclick="clearRoutine()">
+                                Clear Routine
+                            </button>
+                        </div>
+
+                        <div id="routine-loading" class="spinner-container hidden">
+                            <div class="spinner"></div>
+                            <p>Analyzing layered ingredient relationships...</p>
+                        </div>
+
+                        <!-- Results display -->
+                        <div id="analysis-output" class="analysis-output-section hidden">
+                            <div id="routine-status-box" class="status-summary-box">
+                                <span id="routine-status-icon"></span>
+                                <h4 id="routine-status-title">Ready for check</h4>
+                                <p id="routine-status-desc"></p>
+                            </div>
+
+                            <!-- Conflicts section -->
+                            <div id="routine-conflicts-section" class="hidden">
+                                <h4 class="section-title text-red">⚠️ Layering Conflicts Found</h4>
+                                <div id="routine-conflicts-list" class="report-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Pair Analyzer Tab -->
+            <section id="analyzer-tab" class="tab-panel">
+                <div class="panel-header">
+                    <h2>Ingredient Interaction Lookup</h2>
+                    <p>Verify whether two active ingredients pair well together or cause severe irritation/deactivation when layered.</p>
+                </div>
+
+                <div class="pair-analyzer-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ingredient1">Ingredient A</label>
+                            <select id="ingredient1">
+                                <option value="">-- Select Active Ingredient --</option>
+                            </select>
+                        </div>
+                        <div class="analyzer-vs">VS</div>
+                        <div class="form-group">
+                            <label for="ingredient2">Ingredient B</label>
+                            <select id="ingredient2">
+                                <option value="">-- Select Active Ingredient --</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="primary-btn wide-btn" onclick="analyzePair()">Analyze Interaction</button>
+                </div>
+
+                <div id="pair-loading" class="spinner-container hidden">
+                    <div class="spinner"></div>
+                </div>
+
+                <div id="pair-results" class="pair-results-area hidden">
+                    <div id="pair-card" class="pair-result-card">
+                        <div class="pair-title">
+                            <h3 id="pair-heading">Ingredient A & Ingredient B</h3>
+                            <span id="pair-badge" class="badge">Efficacy Status</span>
+                        </div>
+                        <p id="pair-description"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. Graph Intelligence Tab -->
+            <section id="intelligence-tab" class="tab-panel">
+                <div class="panel-header">
+                    <h2>Advanced Graph Insights</h2>
+                    <p>Deep dive queries computed directly over the CognoDB graph database layer (including transitive risk traversal & global ingredient rankings).</p>
+                </div>
+
+                <div class="intelligence-grid">
+                    <!-- Left: Problematic Ingredients -->
+                    <div class="intel-card">
+                        <h3>⚠️ Global Conflict Rankings</h3>
+                        <p class="card-desc">Active ingredients ordered by the number of conflicting relationships they participate in.</p>
+                        
+                        <div id="intel-problematic-loading" class="spinner-container">
+                            <div class="spinner"></div>
+                        </div>
+                        <div id="intel-problematic-list" class="ranking-list"></div>
+                    </div>
+
+                    <!-- Right: Indirect Risks -->
+                    <div class="intel-card">
+                        <h3>🔗 Multi-Hop Indirect Risks (2-3 Hops)</h3>
+                        <p class="card-desc">Transitive risk pathways where layering causes nested instability/sensitivity reactions.</p>
+                        
+                        <div id="intel-risks-loading" class="spinner-container">
+                            <div class="spinner"></div>
+                        </div>
+                        <div id="intel-risks-list" class="risk-paths-list"></div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="app-footer">
+        <p>&copy; 2026 GlowGraph. Built with Spring Boot & CognoDB Managed Graph Database.</p>
+    </footer>
+
+    <!-- Beautiful Detail Modal -->
+    <div id="conflict-detail-modal" class="modal-overlay hidden" onclick="closeModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 id="modal-title">Ingredient Details</h3>
+                <span class="close-modal-btn" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-section">
+                    <h4>Directly Incompatible Actives:</h4>
+                    <div id="modal-conflict-ingredients" class="modal-ingredients-list"></div>
+                </div>
+                <div class="modal-section">
+                    <h4>Conflicting Products in Catalog:</h4>
+                    <div id="modal-conflict-products" class="modal-products-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- App JavaScript -->
+    <script src="js/app.js"></script>
+</body>
+</html>
